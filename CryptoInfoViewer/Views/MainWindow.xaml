@@ -6,8 +6,26 @@
         xmlns:local="clr-namespace:CryptoInfoViewer"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
-    <Grid>
-        
+    <Grid Margin="110,60,0,0">
+        <DataGrid x:Name="MyListBox" AutoGenerateColumns="False" Margin="-110,-18,0,0">
+            <DataGrid.Resources>
+                <Style TargetType="DataGridCell">
+                    <Setter Property="BorderThickness" Value="0,0,1,1" />
+                    <Setter Property="BorderBrush" Value="#D4D4D4" />
+                    <Setter Property="Padding" Value="6" />
+                </Style>
+            </DataGrid.Resources>
+            
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Name" Binding="{Binding name}"  Width="*"  />
+                <DataGridTextColumn Header="Symbol" Binding="{Binding symbol}"  Width="*"  />
+                <DataGridTextColumn Header="Rank" Binding="{Binding rank}"  Width="*"  />
+                <DataGridTextColumn Header="Supply" Binding="{Binding supply}"  Width="*"  />
+                <DataGridTextColumn Header="Price USD" Binding="{Binding priceUsd}"  Width="*"  />
+
+            </DataGrid.Columns>
+        </DataGrid>
 
     </Grid>
+    
 </Window>

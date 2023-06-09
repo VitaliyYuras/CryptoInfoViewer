@@ -15,27 +15,38 @@ using System.Windows.Shapes;
 using System.Net.Http;
 using System.Diagnostics;
 using Speckle.Newtonsoft.Json;
+using CryptoInfoViewer.Services;
+using CryptoInfoViewer.Models;
 
 namespace CryptoInfoViewer
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
-    /// </summary>
+    /// </summary>'
+
+    
     public partial class MainWindow : Window
     {
-        
-
+        private CryptoService cryptoService;
         public MainWindow()
         {
+            cryptoService = new CryptoService();
             InitializeComponent();
-
-           
+            LoadData();
         }
+        public async void LoadData()
+        {
+            try
+            {
+                List<CryptoCurrency> top10CryptoCurrencies = await cryptoService.GetTop10CryptoCurrencies();
 
-        
+                MyListBox.ItemsSource = top10CryptoCurrencies;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error: {ex.Message}");
+            }
+        }
     }
-
-
-
 }
 
