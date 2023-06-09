@@ -11,6 +11,8 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using CryptoInfoViewer.Models;
+using CryptoInfoViewer.Services;
 using OxyPlot;
 using OxyPlot.Axes;
 using OxyPlot.Legends;
@@ -24,9 +26,27 @@ namespace CryptoInfoViewer.Views
     /// </summary>
     public partial class DetailsWindow : Window
     {
-        public DetailsWindow()
+       
+        private CryptoService cryptoService;
+        public DetailsWindow(string id)
         {
+            cryptoService = new CryptoService();
             InitializeComponent();
+            LoadDetails(id);
+
         }
+        public async void LoadDetails(string id)
+        {
+            try
+            {
+                CryptoCurrency сryptoCurrencies = await cryptoService.GetCryptoCurrencies(id);
+                DataContext = сryptoCurrencies;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error: {ex.Message}");
+            }
+        }
+
     }
 }

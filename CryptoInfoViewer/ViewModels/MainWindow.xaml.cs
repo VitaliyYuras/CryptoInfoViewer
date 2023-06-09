@@ -17,6 +17,7 @@ using System.Diagnostics;
 using Speckle.Newtonsoft.Json;
 using CryptoInfoViewer.Services;
 using CryptoInfoViewer.Models;
+using CryptoInfoViewer.Views;
 
 namespace CryptoInfoViewer
 {
@@ -46,6 +47,18 @@ namespace CryptoInfoViewer
             {
                 MessageBox.Show($"Error: {ex.Message}");
             }
+        }
+
+        private void Details_Click(object sender, RoutedEventArgs e)
+        {
+            Button button = (Button)sender;
+            string id = button.CommandParameter.ToString();
+
+            // Створюємо нове вікно детальної інформації
+            DetailsWindow detailWindow = new DetailsWindow(id);
+
+            // Відкриваємо нове вікно
+            detailWindow.Show();
         }
     }
 }

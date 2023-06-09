@@ -24,7 +24,7 @@ namespace CryptoInfoViewer.Services
         {
             try
             {
-                HttpResponseMessage response = await httpClient.GetAsync("https://api.coincap.io/v2/assets");
+                HttpResponseMessage response = await httpClient.GetAsync("https://api.coincap.io/v2/assets/");
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -36,7 +36,7 @@ namespace CryptoInfoViewer.Services
 
                     foreach (var crypto in result.data)
                     {
-                        
+                        string id = crypto.id;
                         string name = crypto.name;
                         string symbol = crypto.symbol;
                         int rank = crypto.rank;
@@ -47,6 +47,7 @@ namespace CryptoInfoViewer.Services
 
                         CryptoCurrency currency = new CryptoCurrency
                         {
+                            id=id,
                             name = name,
                             symbol = symbol,
                             rank = rank,
@@ -69,6 +70,60 @@ namespace CryptoInfoViewer.Services
             catch (Exception ex)
             {
                 
+                MessageBox.Show($"Error: {ex.Message}");
+            }
+
+            return null;
+        }
+        public async Task<CryptoCurrency> GetCryptoCurrencies( string id)
+        {
+            try
+            {
+                string url = string.Format("https://api.coincap.io/v2/assets/{0}", id);
+                HttpResponseMessage response = await httpClient.GetAsync(url);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    string jsonResponse = await response.Content.ReadAsStringAsync();
+                    dynamic result = JsonConvert.DeserializeObject(jsonResponse);
+
+                    
+                    string name = result.data.name;
+                    string symbol = result.data.symbol;
+                    int rank = result.data.rank;
+                    decimal supply = result.data.supply;
+                    decimal? maxSupply = result.data.maxSupply != null ? (decimal?)result.data.maxSupply : null;
+                    decimal? marketCapUsd = result.data.marketCapUsd != null ? (decimal?)result.data.marketCapUsd : null;
+                    decimal? volumeUsd24Hr = result.data.volumeUsd24Hr != null ? (decimal?)result.data.volumeUsd24Hr : null;
+                    decimal? priceUsd = result.data.priceUsd != null ? (decimal?)result.data.priceUsd : null;
+                    decimal? changePercent24Hr = result.data.changePercent24Hr != null ? (decimal?)result.data.changePercent24Hr : null;
+                    decimal? vwap24Hr = result.data.vwap24Hr != null ? (decimal?)result.data.vwap24Hr : null;
+                    //string explorer = result.data.explorer;
+                    string? explorer = result.data.explorer != null ? $"<Hyperlink NavigateUri='{result.data.explorer}'>Explorer Link</Hyperlink>" : null;
+
+
+                    CryptoCurrency currency = new CryptoCurrency
+                    {
+                        id = id,
+                        name = name,
+                        symbol = symbol,
+                        rank = rank,
+                        supply = supply,
+                        maxSupply=maxSupply,
+                        marketCapUsd = marketCapUsd,
+                        volumeUsd24Hr=volumeUsd24Hr,
+                        priceUsd = priceUsd,
+                        changePercent24Hr=changePercent24Hr,
+                        vwap24Hr=vwap24Hr,
+                        explorer=explorer
+
+                    };
+
+                    return currency;
+                }
+            }
+            catch (Exception ex)
+            {
                 MessageBox.Show($"Error: {ex.Message}");
             }
 

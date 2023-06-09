@@ -3,13 +3,52 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:converters="clr-namespace:CryptoInfoViewer.Services"
         xmlns:local="clr-namespace:CryptoInfoViewer.Views"
         xmlns:oxy="http://oxyplot.org/wpf" x:Class="CryptoInfoViewer.Views.DetailsWindow"
         mc:Ignorable="d"
         Title="DetailsWindow" Height="450" Width="800">
-    <Grid>
+    <Window.Resources>
+        <converters:NullToNAConverter x:Key="NullToNAConverter" />
+    </Window.Resources>
+   
+    <Grid Margin="0,0,400,-4">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
 
-        <oxy:PlotView  x:Name="PricePlotView" HorizontalAlignment="Left" Margin="265,144,0,0" VerticalAlignment="Top"/>
+        <StackPanel Grid.Row="0" Margin="10">
+            <TextBlock Text="{Binding name}" FontSize="20" FontWeight="Bold" />
+            <TextBlock Text="{Binding symbol}" FontSize="16" Margin="0,5" />
+            <TextBlock Text="Rank:" />
+            <TextBlock Text="{Binding rank}" Margin="0,4" />
+            <TextBlock Text="Supply:" />
+            <TextBlock Text="{Binding supply }" Margin="0,4" />
+            <TextBlock Text="Max Supply:" />
+            <TextBlock Text="{Binding maxSupply,Converter={StaticResource NullToNAConverter} }" Margin="0,4" />
+            <TextBlock Text="Market Cap:" />
+            <TextBlock Text="{Binding marketCapUsd }" Margin="0,4" />
+            <TextBlock Text="Volume (24Hr):" />
+            <TextBlock Text="{Binding volumeUsd24Hr }" Margin="0,4" />
+            <TextBlock Text="Price (USD):" />
+            <TextBlock Text="{Binding priceUsd }" Margin="0,4" />
+            <TextBlock Text="Change (24Hr):" />
+            <TextBlock Text="{Binding changePercent24Hr }" Margin="0,4" />
+            <TextBlock Text="VWAP (24Hr):" />
+            <TextBlock Text="{Binding vwap24Hr }" Margin="0,4" />
+            <TextBlock Text="Explorer:" />
+            <TextBlock Text="{Binding explorer }" Margin="0,4" />
+
+
+        </StackPanel>
+
+        <Grid Grid.Row="1">
+          
+        </Grid>
+        
+
 
     </Grid>
+    
 </Window>
