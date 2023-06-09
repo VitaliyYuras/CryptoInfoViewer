@@ -22,6 +22,13 @@
                 <DataGridTextColumn Header="Rank" Binding="{Binding rank}"  Width="*"  />
                 <DataGridTextColumn Header="Supply" Binding="{Binding supply}"  Width="*"  />
                 <DataGridTextColumn Header="Price USD" Binding="{Binding priceUsd}"  Width="*"  />
+                <DataGridTemplateColumn Width="*">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Button Content="Details" Click="Details_Click" CommandParameter="{Binding id}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
 
             </DataGrid.Columns>
         </DataGrid>
