@@ -29,6 +29,7 @@ namespace CryptoInfoViewer
     public partial class MainWindow : Window
     {
         private CryptoService cryptoService;
+        private string searchTerm;
         public MainWindow()
         {
             cryptoService = new CryptoService();
@@ -60,6 +61,37 @@ namespace CryptoInfoViewer
             // Відкриваємо нове вікно
             detailWindow.Show();
         }
+
+        private async void SearchBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            searchTerm = SearchBox.Text;
+            await SearchCurrencies(searchTerm);
+        }
+
+        private async Task SearchCurrencies(string searchTerm)
+        {
+            try
+            {
+                List<CryptoCurrency> searchResults = await cryptoService.SearchCurrencies(searchTerm);
+                MyListBox.ItemsSource = searchResults;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error: {ex.Message}");
+            }
+        }
+
+        private void OpenConvert_Click(object sender, RoutedEventArgs e)
+        {
+           
+
+            // Створюємо нове вікно детальної інформації
+            ConvertCryptoWindow detailWindow = new ConvertCryptoWindow();
+
+            // Відкриваємо нове вікно
+            detailWindow.Show();
+        }
+
     }
 }
 

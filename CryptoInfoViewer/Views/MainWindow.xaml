@@ -32,6 +32,9 @@
 
             </DataGrid.Columns>
         </DataGrid>
+        <TextBox x:Name="SearchBox" TextChanged="SearchBox_TextChanged" HorizontalAlignment="Left" Margin="560,-51,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120"/>
+        <Button Click="OpenConvert_Click" Content="Button" HorizontalAlignment="Left" Margin="65,-51,0,0" VerticalAlignment="Top"/>
+        <Label Content="Search" HorizontalAlignment="Left" Margin="515,-55,0,0" VerticalAlignment="Top"/>
 
     </Grid>
     

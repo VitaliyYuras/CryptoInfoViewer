@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:converters="clr-namespace:CryptoInfoViewer.Services"
+        xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
         xmlns:local="clr-namespace:CryptoInfoViewer.Views"
         xmlns:oxy="http://oxyplot.org/wpf" x:Class="CryptoInfoViewer.Views.DetailsWindow"
         mc:Ignorable="d"
@@ -43,10 +44,17 @@
 
         </StackPanel>
 
-        <Grid Grid.Row="1">
-          
+        <Grid>
+            <lvc:CartesianChart Series="{Binding CandleSeriesCollection}">
+                <!-- Add other necessary elements here -->
+            </lvc:CartesianChart>
         </Grid>
-        
+        <Grid Margin="455,39,-345,85">
+            <Label x:Name="Label1"  Content="Label" HorizontalAlignment="Left" Margin="215,144,0,0" VerticalAlignment="Top"/>
+
+        </Grid>
+
+
 
 
     </Grid>
