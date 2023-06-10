@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Xml.Linq;
 
 namespace CryptoInfoViewer.Services
 {
@@ -63,6 +64,7 @@ namespace CryptoInfoViewer.Services
                         .OrderByDescending(c => c.priceUsd)
                         .Take(25)
                         .ToList();
+                   
 
                     return top10CryptoCurrencies;
                 }
@@ -129,5 +131,177 @@ namespace CryptoInfoViewer.Services
 
             return null;
         }
+        public async Task<List<CryptoCurrency>> SearchCurrencies(string searchTerm)
+        {
+            try
+            {
+
+                List<CryptoCurrency> top10CryptoCurrencies = await GetCryptoCurrencies();
+
+                if (top10CryptoCurrencies != null)
+                {
+                    List<CryptoCurrency> filteredCurrencies = top10CryptoCurrencies
+                        .Where(c => c.name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)
+                                    || c.symbol.Contains(searchTerm, StringComparison.OrdinalIgnoreCase))
+                        .ToList();
+
+                    return filteredCurrencies;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error: {ex.Message}");
+            }
+
+            return null;
+        }
+
+        public async Task<List<CandleData>> GetDataFromApi(string exchange,string interval,string baseId,string quoteId)
+        {
+            using (HttpClient client = new HttpClient())
+            {
+                string apiUrl = "https://api.coincap.io/v2/candles?exchange={exchange}&interval={interval}&baseId={basedId}&quoteId={quoteId}";
+                HttpResponseMessage response = await client.GetAsync(apiUrl);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    string jsonResponse = await response.Content.ReadAsStringAsync();
+                    dynamic result = JsonConvert.DeserializeObject(jsonResponse);
+                    List<CandleData> cryptoData = new List<CandleData> ();
+                    foreach (var crypto in result.data)
+                    {
+                        
+                        decimal open= crypto.open;
+                        decimal high = crypto.high;
+                        decimal low = crypto.low;
+                        decimal close = crypto.close;
+                        decimal volume = crypto.volume;
+                        decimal period = crypto.period;
+                        CandleData currency = new CandleData
+                        {
+                            open=open,
+                            high=high,
+                            low=low,
+                            close=close,
+                            volume=volume,
+                            period=period
+
+                        };
+
+                        cryptoData.Add(currency);
+                    }
+                    return cryptoData;
+
+                }
+                else
+                {
+                    MessageBox.Show("Failed to retrieve data from API");
+                    return null;
+                }
+            }
+        }
+        public async Task<List<Rates>> GetRates()
+        {
+            try
+            {
+                HttpResponseMessage response = await httpClient.GetAsync("https://api.coincap.io/v2/rates/");
+
+                if (response.IsSuccessStatusCode)
+                {
+                    string jsonResponse = await response.Content.ReadAsStringAsync();
+
+                    dynamic result = JsonConvert.DeserializeObject(jsonResponse);
+
+                    List<Rates> ratesList = new List<Rates>();
+
+                    foreach (var crypto in result.data)
+                    {
+                        string id = crypto.id;
+                        string symbol = crypto.symbol;
+                        string currencySymbol = crypto.currencySymbol;
+                        string type = crypto.type;
+                        decimal rateUsd = crypto.rateUsd;
+
+
+
+
+                        Rates rates = new Rates
+                        {
+                            id = id,
+                            symbol = symbol,
+                            currencySymbol = currencySymbol,
+                            type = type,
+                            rateUsd = rateUsd
+
+                        };
+
+                        ratesList.Add(rates);
+                    }
+
+
+                    return ratesList;
+                }
+            }
+            catch (Exception ex)
+            {
+
+                MessageBox.Show($"Error: {ex.Message}");
+            }
+
+            return null;
+        }
+
+        public async Task<List<CryptoCurrency>> GetCryptoCurrencies()
+        {
+            try
+            {
+                HttpResponseMessage response = await httpClient.GetAsync("https://api.coincap.io/v2/assets/");
+
+                if (response.IsSuccessStatusCode)
+                {
+                    string jsonResponse = await response.Content.ReadAsStringAsync();
+
+                    dynamic result = JsonConvert.DeserializeObject(jsonResponse);
+
+                    List<CryptoCurrency> cryptoCurrencies = new List<CryptoCurrency>();
+
+                    foreach (var crypto in result.data)
+                    {
+                        string id = crypto.id;
+                        string name = crypto.name;
+                        string symbol = crypto.symbol;
+                        int rank = crypto.rank;
+                        decimal supply = crypto.supply;
+
+                        decimal priceUsd = crypto.priceUsd;
+
+
+                        CryptoCurrency currency = new CryptoCurrency
+                        {
+                            id = id,
+                            name = name,
+                            symbol = symbol,
+                            rank = rank,
+                            supply = supply,
+                            priceUsd = priceUsd
+
+                        };
+
+                        cryptoCurrencies.Add(currency);
+                    }
+
+                    return cryptoCurrencies;
+                }
+            }
+            catch (Exception ex)
+            {
+
+                MessageBox.Show($"Error: {ex.Message}");
+            }
+
+            return null;
+        }
+
     }
+    
 }
