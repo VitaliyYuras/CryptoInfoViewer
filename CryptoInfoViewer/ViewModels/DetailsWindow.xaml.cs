@@ -13,11 +13,16 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using CryptoInfoViewer.Models;
 using CryptoInfoViewer.Services;
+using LiveCharts;
 using OxyPlot;
 using OxyPlot.Axes;
 using OxyPlot.Legends;
 using OxyPlot.Series;
 using OxyPlot.Wpf;
+using LiveCharts;
+using LiveCharts.Defaults;
+using LiveCharts.Wpf;
+using System.Reflection.Emit;
 
 namespace CryptoInfoViewer.Views
 {
@@ -28,11 +33,15 @@ namespace CryptoInfoViewer.Views
     {
        
         private CryptoService cryptoService;
+        public SeriesCollection CandleSeriesCollection { get; set; }
+
+
         public DetailsWindow(string id)
         {
             cryptoService = new CryptoService();
             InitializeComponent();
             LoadDetails(id);
+            LoadCandlestickData();
 
         }
         public async void LoadDetails(string id)
@@ -47,6 +56,26 @@ namespace CryptoInfoViewer.Views
                 MessageBox.Show($"Error: {ex.Message}");
             }
         }
+
+
+        public async void LoadCandlestickData()
+        {
+            List<CandleData> cryptoData = await cryptoService.GetDataFromApi("poloniex", "h8", "ethereum", "bitcoin");
+
+            Label1.Content = cryptoData.Count.ToString();
+
+            CandleSeriesCollection = new SeriesCollection();
+
+            foreach (CandleData candle in cryptoData)
+            {
+                OhlcPoint ohlcPoint = new OhlcPoint((double)candle.open, (double)candle.high, (double)candle.low, (double)candle.close);
+                CandleSeriesCollection.Add(new OhlcSeries
+                {
+                    Values = new ChartValues<OhlcPoint> { ohlcPoint }
+                });
+            }
+        }
+
 
     }
 }
