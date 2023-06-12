@@ -21,53 +21,19 @@ namespace CryptoInfoViewer.Services
             httpClient = new HttpClient();
         }
 
-        public async Task<List<CryptoCurrency>> GetTop10CryptoCurrencies()
+        public async Task<List<CryptoCurrency>> GetTop25CryptoCurrencies()
         {
             try
             {
-                HttpResponseMessage response = await httpClient.GetAsync("https://api.coincap.io/v2/assets/");
-
-                if (response.IsSuccessStatusCode)
-                {
-                    string jsonResponse = await response.Content.ReadAsStringAsync();
-
-                    dynamic result = JsonConvert.DeserializeObject(jsonResponse);
-
-                    List<CryptoCurrency> cryptoCurrencies = new List<CryptoCurrency>();
-
-                    foreach (var crypto in result.data)
-                    {
-                        string id = crypto.id;
-                        string name = crypto.name;
-                        string symbol = crypto.symbol;
-                        int rank = crypto.rank;
-                        decimal supply = crypto.supply;
-                        
-                        decimal priceUsd = crypto.priceUsd;
-                        
-
-                        CryptoCurrency currency = new CryptoCurrency
-                        {
-                            id=id,
-                            name = name,
-                            symbol = symbol,
-                            rank = rank,
-                            supply = supply,
-                            priceUsd = priceUsd
-                           
-                        };
-
-                        cryptoCurrencies.Add(currency);
-                    }
-
-                    List<CryptoCurrency> top10CryptoCurrencies = cryptoCurrencies
+                List<CryptoCurrency> сryptoCurrencies = await GetCryptoCurrencies();
+                List<CryptoCurrency> top25CryptoCurrencies = сryptoCurrencies
                         .OrderByDescending(c => c.priceUsd)
                         .Take(25)
                         .ToList();
                    
 
-                    return top10CryptoCurrencies;
-                }
+                    return top25CryptoCurrencies;
+                
             }
             catch (Exception ex)
             {
@@ -291,6 +257,55 @@ namespace CryptoInfoViewer.Services
                     }
 
                     return cryptoCurrencies;
+                }
+            }
+            catch (Exception ex)
+            {
+
+                MessageBox.Show($"Error: {ex.Message}");
+            }
+
+            return null;
+        }
+
+        //Отримання ринків де можна купити дану криптовалюту
+
+        public async Task<List<CryptoMarkets>> GetMarkets(string id)
+        {
+            try
+            {
+                string url = string.Format("https://api.coincap.io/v2/assets/{0}/markets", id);
+                HttpResponseMessage response = await httpClient.GetAsync(url);
+               
+
+                if (response.IsSuccessStatusCode)
+                {
+                    string jsonResponse = await response.Content.ReadAsStringAsync();
+
+                    dynamic result = JsonConvert.DeserializeObject(jsonResponse);
+
+                    List<CryptoMarkets> cryptoMarkets = new List<CryptoMarkets>();
+
+                    foreach (var crypto in result.data)
+                    {
+                        
+                        string exchangeId = crypto.exchangeId;
+                        string quoteSymbol = crypto.quoteSymbol;
+                        decimal priceUsd = crypto.priceUsd;
+
+
+                        CryptoMarkets currency = new CryptoMarkets
+                        {
+                            exchangeId = exchangeId,
+                            quoteSymbol=quoteSymbol,
+                            priceUsd = priceUsd
+
+                        };
+
+                        cryptoMarkets.Add(currency);
+                    }
+
+                    return cryptoMarkets;
                 }
             }
             catch (Exception ex)
