@@ -40,7 +40,9 @@ namespace CryptoInfoViewer.Views
         {
             cryptoService = new CryptoService();
             InitializeComponent();
+            LoadMarkets(id);
             LoadDetails(id);
+            //LoadMarkets(id);
             LoadCandlestickData();
 
         }
@@ -56,13 +58,25 @@ namespace CryptoInfoViewer.Views
                 MessageBox.Show($"Error: {ex.Message}");
             }
         }
+        public async void LoadMarkets(string id)
+        {
+            try
+            {
+                List <CryptoMarkets> сryptoMarkets = await cryptoService.GetMarkets(id);
+                ListMarkets.ItemsSource = сryptoMarkets;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error: {ex.Message}");
+            }
+        }
 
 
         public async void LoadCandlestickData()
         {
             List<CandleData> cryptoData = await cryptoService.GetDataFromApi("poloniex", "h8", "ethereum", "bitcoin");
 
-            Label1.Content = cryptoData.Count.ToString();
+            //Label1.Content = cryptoData.Count.ToString();
 
             CandleSeriesCollection = new SeriesCollection();
 
