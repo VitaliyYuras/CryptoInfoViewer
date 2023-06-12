@@ -40,7 +40,7 @@ namespace CryptoInfoViewer
         {
             try
             {
-                List<CryptoCurrency> top10CryptoCurrencies = await cryptoService.GetTop10CryptoCurrencies();
+                List<CryptoCurrency> top10CryptoCurrencies = await cryptoService.GetTop25CryptoCurrencies();
 
                 MyListBox.ItemsSource = top10CryptoCurrencies;
             }
@@ -90,6 +90,15 @@ namespace CryptoInfoViewer
 
             // Відкриваємо нове вікно
             detailWindow.Show();
+        }
+        private void Exit_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBoxResult result = MessageBox.Show("Ви дійсно бажаєте вийти?", "Підтвердження виходу", MessageBoxButton.YesNo, MessageBoxImage.Question);
+
+            if (result == MessageBoxResult.Yes)
+            {
+                Application.Current.Shutdown();
+            }
         }
 
     }
