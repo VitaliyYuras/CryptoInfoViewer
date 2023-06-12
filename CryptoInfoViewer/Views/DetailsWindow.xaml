@@ -49,8 +49,23 @@
                 <!-- Add other necessary elements here -->
             </lvc:CartesianChart>
         </Grid>
-        <Grid Margin="455,39,-345,85">
-            <Label x:Name="Label1"  Content="Label" HorizontalAlignment="Left" Margin="215,144,0,0" VerticalAlignment="Top"/>
+        <Grid Margin="425,24,-370,43">
+            <DataGrid x:Name="ListMarkets" AutoGenerateColumns="False">
+                <DataGrid.Resources>
+                    <Style TargetType="DataGridCell">
+                        <Setter Property="BorderThickness" Value="0,0,1,1" />
+                        <Setter Property="BorderBrush" Value="#D4D4D4" />
+                        <Setter Property="Padding" Value="6" />
+                    </Style>
+                </DataGrid.Resources>
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Market" Binding="{Binding exchangeId}"  Width="*"  />
+                    <DataGridTextColumn Header="Asset used to purchase base" Binding="{Binding quoteSymbol}"  Width="*"  />
+                    <DataGridTextColumn Header="Price USD" Binding="{Binding priceUsd}"  Width="*"  />
+                    
+                </DataGrid.Columns>
+            </DataGrid>
+
 
         </Grid>
 
