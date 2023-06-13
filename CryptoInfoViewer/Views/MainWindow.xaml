@@ -3,65 +3,63 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:CC="clr-namespace:CryptoInfoViewer.Properties"
         xmlns:local="clr-namespace:CryptoInfoViewer"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="450" Width="800"
+        >
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
 
-    <Window.Resources>
-        <Style TargetType="TextBox">
-            <Setter Property="BorderThickness" Value="1" />
-            <Setter Property="BorderBrush" Value="#D4D4D4" />
-            <Setter Property="Padding" Value="6" />
-        </Style>
-        <Style TargetType="Button">
-            <Setter Property="Padding" Value="10" />
-            <Setter Property="Margin" Value="5" />
-        </Style>
-    </Window.Resources>
-    <Grid Margin="110,60,0,0">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="17*"/>
-            <ColumnDefinition Width="29*"/>
-        </Grid.ColumnDefinitions>
-        <DataGrid x:Name="MyListBox" AutoGenerateColumns="False" Margin="-110,0,0,0" Grid.ColumnSpan="2">
-            <DataGrid.Resources>
-                <Style TargetType="DataGridCell">
-                    <Setter Property="BorderThickness" Value="0,0,1,1" />
-                    <Setter Property="BorderBrush" Value="#D4D4D4" />
-                    <Setter Property="Padding" Value="6" />
-                </Style>
-            </DataGrid.Resources>
-
-
-
-
-            <DataGrid.Columns>
-                <DataGridTextColumn Header="Name" Binding="{Binding name}"  Width="*"  />
-                <DataGridTextColumn Header="Symbol" Binding="{Binding symbol}"  Width="*"  />
-                <DataGridTextColumn Header="Rank" Binding="{Binding rank}"  Width="*"  />
-                <DataGridTextColumn Header="Supply" Binding="{Binding supply}"  Width="*"  />
-                <DataGridTextColumn Header="Price USD" Binding="{Binding priceUsd}"  Width="*"  />
-                <DataGridTemplateColumn Width="*">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <Button Content="Details" Click="Details_Click" CommandParameter="{Binding id}"/>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-
-            </DataGrid.Columns>
-        </DataGrid>
-        <TextBox x:Name="SearchBox" TextChanged="SearchBox_TextChanged" HorizontalAlignment="Left" Margin="305,-51,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120" Grid.Column="1"/>
-        <Label Content="Search" HorizontalAlignment="Left" Margin="260,-55,0,0" VerticalAlignment="Top" Grid.Column="1"/>
-
-        <Menu Margin="-110,-56,30,379">
-            <MenuItem Click="Exit_Click" Header="Exit"/>
-            <MenuItem Click="OpenConvert_Click" Header="Convert cryptocurrency"/>
-            
-
-            <MenuItem Header="About"/>
+        <!-- Menu -->
+        <Menu>
+            <MenuItem Header="{x:Static CC:Resources.FileMenuItem}">
+                <MenuItem Header="{x:Static CC:Resources.ExitMenuItem}" Click="Exit_Click" />
+            </MenuItem>
+            <MenuItem Header="{x:Static CC:Resources.ToolsMenuItem}">
+                <MenuItem Header="{x:Static CC:Resources.ConvertMenuItem}" Click="OpenConvert_Click" />
+            </MenuItem>
+            <MenuItem Header="{x:Static CC:Resources.HelpMenuItem}">
+                <MenuItem Header="{x:Static CC:Resources.AboutMenuItem}" />
+            </MenuItem>
         </Menu>
 
-    </Grid>
+        <!-- SearchBox -->
+        <TextBox x:Name="SearchBox" TextChanged="SearchBox_TextChanged" HorizontalAlignment="Right" Height="30" Width="100"  />
 
+        <!-- Content -->
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="73*"/>
+                <ColumnDefinition Width="7*"/>
+            </Grid.ColumnDefinitions>
+            <DataGrid x:Name="MyListBox" AutoGenerateColumns="False" Grid.ColumnSpan="2">
+                <DataGrid.Resources>
+                    <Style TargetType="DataGridCell">
+                        <Setter Property="BorderThickness" Value="0,0,1,1" />
+                        <Setter Property="BorderBrush" Value="#D4D4D4" />
+                        <Setter Property="Padding" Value="6" />
+                    </Style>
+                </DataGrid.Resources>
+
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="{x:Static CC:Resources.NameColumnHeader}" Binding="{Binding name}" Width="*" />
+                    <DataGridTextColumn Header="{x:Static CC:Resources.SymbolColumnHeader}" Binding="{Binding symbol}" Width="*" />
+                    <DataGridTextColumn Header="{x:Static CC:Resources.RankColumnHeader}" Binding="{Binding rank}" Width="*" />
+                    <DataGridTextColumn Header="{x:Static CC:Resources.SupplyColumnHeader}" Binding="{Binding supply}" Width="*" />
+                    <DataGridTextColumn Header="{x:Static CC:Resources.PriceColumnHeader}" Binding="{Binding priceUsd}" Width="*" />
+                    <DataGridTemplateColumn Width="*">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Button Content="{x:Static CC:Resources.DetailsButton}" Click="Details_Click" CommandParameter="{Binding id}" />
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+        </Grid>
+    </Grid>
 </Window>
