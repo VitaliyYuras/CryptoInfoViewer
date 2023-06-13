@@ -3,11 +3,11 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-           xmlns:CC="clr-namespace:CryptoInfoViewer.Properties"
+        xmlns:CC="clr-namespace:CryptoInfoViewer.Properties"
         xmlns:local="clr-namespace:CryptoInfoViewer.Views"
         mc:Ignorable="d"
-        Title="ConvertCryptoWindow" Height="450" Width="800">
-    <Grid>
+        Title="ConvertCryptoWindow" Height="450" Width="600">
+    <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
@@ -20,11 +20,11 @@
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
 
-        <Label Content="{x:Static CC:Resources.AmountItem}"/>
+        <Label Content="{x:Static CC:Resources.AmountItem}" HorizontalAlignment="Right"/>
         <TextBox x:Name="AmountTextBox" PreviewTextInput="AmountTextBox_PreviewTextInput" Grid.Column="1" Margin="5,0,0,0" Width="85"/>
 
-        <Label Content="{x:Static CC:Resources.SourceCurrencyItem}" Grid.Row="1"/>
-        <ComboBox x:Name="SourceCurrencyComboBox" Grid.Row="1" Grid.Column="1">
+        <Label Content="{x:Static CC:Resources.SourceCurrencyItem}" Grid.Row="1" HorizontalAlignment="Right"/>
+        <ComboBox x:Name="SourceCurrencyComboBox" Grid.Row="1" Grid.Column="1" VerticalAlignment="Center">
             <ComboBox.ItemTemplate>
                 <DataTemplate>
                     <TextBlock Text="{Binding id}" />
@@ -32,8 +32,8 @@
             </ComboBox.ItemTemplate>
         </ComboBox>
 
-        <Label Content="{x:Static CC:Resources.TargetCurrencyItem}" Grid.Row="2"/>
-        <ComboBox x:Name="TargetCurrencyComboBox" Grid.Row="2" Grid.Column="1">
+        <Label Content="{x:Static CC:Resources.TargetCurrencyItem}" Grid.Row="2" HorizontalAlignment="Right"/>
+        <ComboBox x:Name="TargetCurrencyComboBox" Grid.Row="2" Grid.Column="1" VerticalAlignment="Center">
             <ComboBox.ItemTemplate>
                 <DataTemplate>
                     <TextBlock Text="{Binding id}" />
@@ -41,9 +41,9 @@
             </ComboBox.ItemTemplate>
         </ComboBox>
 
-        <Button Content="{x:Static CC:Resources.ConvertButton}" Grid.Row="3" Click="Convert_Click" Grid.Column="1" Margin="0,5,0,5"/>
+        <Button Content="{x:Static CC:Resources.ConvertButton}" Grid.Row="3" Click="Convert_Click" Grid.Column="1" Margin="0,5,0,5" HorizontalAlignment="Center"/>
 
-        <Label Content="{x:Static CC:Resources.ResultItem}" Grid.Row="4"/>
-        <Label x:Name="ResultLabel" Grid.Row="4" Grid.Column="1"/>
+        <Label Content="{x:Static CC:Resources.ResultItem}" Grid.Row="4" HorizontalAlignment="Right"/>
+        <Label x:Name="ResultLabel" Grid.Row="4" Grid.Column="1" HorizontalAlignment="Center"/>
     </Grid>
 </Window>

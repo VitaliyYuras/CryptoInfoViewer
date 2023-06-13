@@ -24,6 +24,7 @@
                 <Setter Property="BorderThickness" Value="1" />
                 <Setter Property="BorderBrush" Value="#CCCCCC" />
                 <Setter Property="Background" Value="#F0F0F0" />
+                <Setter Property="FontWeight" Value="Bold" />
             </Style>
 
             <Style TargetType="ComboBox">

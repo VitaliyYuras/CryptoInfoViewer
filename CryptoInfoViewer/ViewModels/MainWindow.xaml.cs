@@ -106,6 +106,13 @@ namespace CryptoInfoViewer
             }
         }
 
+        private void About_Click(object sender, RoutedEventArgs e)
+        {
+             MessageBox.Show("A program that  display various information\r\nrelated to cryptocurrencies \r\nVitali Yuras");
+
+            
+        }
+
     }
 }
 

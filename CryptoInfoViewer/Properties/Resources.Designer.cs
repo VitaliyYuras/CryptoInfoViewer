@@ -232,6 +232,15 @@ namespace CryptoInfoViewer.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Search.
+        /// </summary>
+        public static string SearchItem {
+            get {
+                return ResourceManager.GetString("SearchItem", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Source Currency.
         /// </summary>
         public static string SourceCurrencyItem {
