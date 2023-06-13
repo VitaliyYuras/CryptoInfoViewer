@@ -9,21 +9,12 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using CryptoInfoViewer.Models;
 using CryptoInfoViewer.Services;
-using LiveCharts;
-using OxyPlot;
-using OxyPlot.Axes;
-using OxyPlot.Legends;
-using OxyPlot.Series;
-using OxyPlot.Wpf;
-using LiveCharts;
-using LiveCharts.Defaults;
-using LiveCharts.Wpf;
-using System.Reflection.Emit;
+
 using System.Diagnostics;
+
 
 namespace CryptoInfoViewer.Views
 {
@@ -34,15 +25,16 @@ namespace CryptoInfoViewer.Views
     {
        
         private CryptoService cryptoService;
-        public SeriesCollection CandleSeriesCollection { get; set; }
 
         public DetailsWindow(string id)
         {
             cryptoService = new CryptoService();
+            
             InitializeComponent();
             LoadMarkets(id);
             LoadDetails(id);
-            LoadCandlestickData();
+            LoadCandlestickData(id);
+
 
         }
         // Завантаження всіх даних про певну криптовалюту
@@ -73,19 +65,58 @@ namespace CryptoInfoViewer.Views
         }
 
         // завантаження діаграми криптовалюти
-        public async void LoadCandlestickData()
+        public async void LoadCandlestickData(string symbol)
         {
-            List<CandleData> cryptoData = await cryptoService.GetDataFromApi("poloniex", "h8", "ethereum", "bitcoin");
+            List<CandleData> candleData = await cryptoService.GetDataFromApi(symbol, "7", "usd");
 
-            CandleSeriesCollection = new SeriesCollection();
+            DrawCandleChart(candleData);
+        }
+        private void DrawCandleChart(List<CandleData> data)
+        {
+            // Очистити попередню діаграму, якщо є
+            canvas.Children.Clear();
 
-            foreach (CandleData candle in cryptoData)
+            // Встановити розміри графіку
+            double chartWidth = canvas.ActualWidth;
+            double chartHeight = canvas.ActualHeight;
+
+            // Розрахувати ширину свічки
+            double candleWidth = chartWidth / data.Count;
+
+            // Знайти максимальне та мінімальне значення ціни для встановлення масштабу графіку
+            decimal maxPrice = data.Max(c => c.high);
+            decimal minPrice = data.Min(c => c.low);
+            decimal priceRange = maxPrice - minPrice;
+
+            // Проходження по кожному запису і побудова свічки
+            for (int i = 0; i < data.Count; i++)
             {
-                OhlcPoint ohlcPoint = new OhlcPoint((double)candle.open, (double)candle.high, (double)candle.low, (double)candle.close);
-                CandleSeriesCollection.Add(new OhlcSeries
+                CandleData candle = data[i];
+
+                // Розрахувати координати свічки
+                double candleX = i * candleWidth;
+                double candleY = chartHeight * (1 - (double)(candle.close - minPrice) / (double)priceRange);
+                double candleHeight = chartHeight * (double)(candle.close - candle.open) / (double)priceRange;
+
+                // Визначити колір свічки в залежності від напрямку руху ціни
+                SolidColorBrush candleColor = candle.close >= candle.open ? Brushes.Green : Brushes.Red;
+
+                // Створити прямокутник для свічки
+                Rectangle candleRectangle = new Rectangle
                 {
-                    Values = new ChartValues<OhlcPoint> { ohlcPoint }
-                });
+                    Fill = candleColor,
+                    Width = candleWidth,
+                    Height = Math.Abs(candleHeight),
+                    Stroke = Brushes.Black,
+                    StrokeThickness = 1
+                };
+
+                // Встановити позицію свічки
+                Canvas.SetLeft(candleRectangle, candleX);
+                Canvas.SetTop(candleRectangle, candleY - (candle.close >= candle.open ? 0 : Math.Abs(candleHeight)));
+
+                // Додати свічку на графік
+                canvas.Children.Add(candleRectangle);
             }
         }
 

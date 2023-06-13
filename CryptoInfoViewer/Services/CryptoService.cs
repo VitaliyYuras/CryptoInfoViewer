@@ -1,5 +1,6 @@
 ﻿using CryptoInfoViewer.Models;
 using Speckle.Newtonsoft.Json;
+using Speckle.Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -124,42 +125,82 @@ namespace CryptoInfoViewer.Services
         }
 
         //Отримання даних для побудови японської свічкової діаграми
-        public async Task<List<CandleData>> GetDataFromApi(string exchange,string interval,string baseId,string quoteId)
+        //public async Task<List<CandleData>> GetDataFromApi(string exchange,string interval,string baseId,string quoteId)
+        //{
+        //    using (HttpClient client = new HttpClient())
+        //    {
+        //        string apiUrl = "https://api.coingecko.com/api/v3/coins/bitcoin/ohlc?vs_currency=usd&days=7";
+        //        HttpResponseMessage response = await client.GetAsync(apiUrl);
+
+        //        if (response.IsSuccessStatusCode)
+        //        {
+        //            string jsonResponse = await response.Content.ReadAsStringAsync();
+        //            dynamic result = JsonConvert.DeserializeObject(jsonResponse);
+        //            List<CandleData> cryptoData = new List<CandleData> ();
+        //            foreach (var crypto in result)
+        //            {
+
+        //                decimal open= crypto.open;
+        //                decimal high = crypto.high;
+        //                decimal low = crypto.low;
+        //                decimal close = crypto.close;
+
+        //                CandleData currency = new CandleData
+        //                {
+        //                    open=open,
+        //                    high=high,
+        //                    low=low,
+        //                    close=close,
+
+
+        //                };
+
+        //                cryptoData.Add(currency);
+        //            }
+        //            return cryptoData;
+
+        //        }
+        //        else
+        //        {
+        //            MessageBox.Show("Failed to retrieve data from API");
+        //            return null;
+        //        }
+        //    }
+        //}
+        public async Task<List<CandleData>> GetDataFromApi(string symbol, string days, string currency)
         {
             using (HttpClient client = new HttpClient())
             {
-                string apiUrl = "https://api.coincap.io/v2/candles?exchange={exchange}&interval={interval}&baseId={basedId}&quoteId={quoteId}";
+                string apiUrl = $"https://api.coingecko.com/api/v3/coins/{symbol}/ohlc?vs_currency={currency}&days={days}";
                 HttpResponseMessage response = await client.GetAsync(apiUrl);
 
                 if (response.IsSuccessStatusCode)
                 {
                     string jsonResponse = await response.Content.ReadAsStringAsync();
-                    dynamic result = JsonConvert.DeserializeObject(jsonResponse);
-                    List<CandleData> cryptoData = new List<CandleData> ();
-                    foreach (var crypto in result.data)
-                    {
-                        
-                        decimal open= crypto.open;
-                        decimal high = crypto.high;
-                        decimal low = crypto.low;
-                        decimal close = crypto.close;
-                        decimal volume = crypto.volume;
-                        decimal period = crypto.period;
-                        CandleData currency = new CandleData
-                        {
-                            open=open,
-                            high=high,
-                            low=low,
-                            close=close,
-                            volume=volume,
-                            period=period
+                    JArray result = JArray.Parse(jsonResponse);
 
+                    List<CandleData> cryptoData = new List<CandleData>();
+                    foreach (JArray candle in result)
+                    {
+                       
+                        decimal open = (decimal)candle[1];
+                        decimal high = (decimal)candle[2];
+                        decimal low = (decimal)candle[3];
+                        decimal close = (decimal)candle[4];
+
+                        CandleData currencyData = new CandleData
+                        {
+                            
+                            open = open,
+                            high = high,
+                            low = low,
+                            close = close
                         };
 
-                        cryptoData.Add(currency);
+                        cryptoData.Add(currencyData);
                     }
-                    return cryptoData;
 
+                    return cryptoData;
                 }
                 else
                 {
@@ -317,6 +358,7 @@ namespace CryptoInfoViewer.Services
 
             return null;
         }
+
 
     }
     

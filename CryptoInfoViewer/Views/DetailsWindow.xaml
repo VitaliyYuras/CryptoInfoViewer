@@ -4,10 +4,9 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:converters="clr-namespace:CryptoInfoViewer.Services"
-        xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
         xmlns:CC="clr-namespace:CryptoInfoViewer.Properties"
         xmlns:local="clr-namespace:CryptoInfoViewer.Views"
-        xmlns:oxy="http://oxyplot.org/wpf"
+        
         mc:Ignorable="d"
         Title="DetailsWindow" Height="450" Width="800" WindowState="Maximized">
 
@@ -60,10 +59,11 @@
             </Button>
 
         </StackPanel>
+        <Canvas  x:Name="canvas" Grid.Row="0" Grid.Column="1" Background="Gray" >
+            <Line X1="0" X2="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=Canvas}}" Y1="0" Y2="0" Stroke="Black" StrokeThickness="1" />
+            <Line X1="0" X2="0" Y1="0" Y2="{Binding ActualHeight, RelativeSource={RelativeSource AncestorType=Canvas}}" Stroke="Black" StrokeThickness="1" />
+        </Canvas>
 
-        <lvc:CartesianChart Grid.Row="0" Grid.Column="1" Series="{Binding CandleSeriesCollection}">
-           
-        </lvc:CartesianChart>
 
         <DataGrid Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" x:Name="ListMarkets" AutoGenerateColumns="False">
             <DataGrid.Columns>
