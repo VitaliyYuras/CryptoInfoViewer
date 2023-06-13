@@ -23,6 +23,7 @@ using LiveCharts;
 using LiveCharts.Defaults;
 using LiveCharts.Wpf;
 using System.Reflection.Emit;
+using System.Diagnostics;
 
 namespace CryptoInfoViewer.Views
 {
@@ -35,17 +36,16 @@ namespace CryptoInfoViewer.Views
         private CryptoService cryptoService;
         public SeriesCollection CandleSeriesCollection { get; set; }
 
-
         public DetailsWindow(string id)
         {
             cryptoService = new CryptoService();
             InitializeComponent();
             LoadMarkets(id);
             LoadDetails(id);
-            //LoadMarkets(id);
             LoadCandlestickData();
 
         }
+        // Завантаження всіх даних про певну криптовалюту
         public async void LoadDetails(string id)
         {
             try
@@ -58,6 +58,7 @@ namespace CryptoInfoViewer.Views
                 MessageBox.Show($"Error: {ex.Message}");
             }
         }
+        // ЗАвантаження ринків де можна обміняти дану криптовалюту
         public async void LoadMarkets(string id)
         {
             try
@@ -71,12 +72,10 @@ namespace CryptoInfoViewer.Views
             }
         }
 
-
+        // завантаження діаграми криптовалюти
         public async void LoadCandlestickData()
         {
             List<CandleData> cryptoData = await cryptoService.GetDataFromApi("poloniex", "h8", "ethereum", "bitcoin");
-
-            //Label1.Content = cryptoData.Count.ToString();
 
             CandleSeriesCollection = new SeriesCollection();
 
@@ -90,6 +89,27 @@ namespace CryptoInfoViewer.Views
             }
         }
 
+        // Кнопка для відкриття сайту певної криптовалюти
+        private void WButton_Click(object sender, RoutedEventArgs e)
+        {
+
+            Button button = (Button)sender;
+            Hyperlink? hyperlink = button.Template.FindName("PART_Hyperlink", button) as Hyperlink;
+
+            if (hyperlink != null)
+            {
+                Uri explorerUri = hyperlink.NavigateUri;
+
+                if (explorerUri != null)
+                {
+                    string url = explorerUri.AbsoluteUri;
+
+                    Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
+                }
+            }
+
+
+        }
 
     }
 }

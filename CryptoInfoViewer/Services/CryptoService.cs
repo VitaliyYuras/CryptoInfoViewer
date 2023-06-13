@@ -21,6 +21,7 @@ namespace CryptoInfoViewer.Services
             httpClient = new HttpClient();
         }
 
+        // Отримання топ 25 криптовалют за ціною
         public async Task<List<CryptoCurrency>> GetTop25CryptoCurrencies()
         {
             try
@@ -43,6 +44,7 @@ namespace CryptoInfoViewer.Services
 
             return null;
         }
+        //Отримання криптовалюти за id
         public async Task<CryptoCurrency> GetCryptoCurrencies( string id)
         {
             try
@@ -54,8 +56,7 @@ namespace CryptoInfoViewer.Services
                 {
                     string jsonResponse = await response.Content.ReadAsStringAsync();
                     dynamic result = JsonConvert.DeserializeObject(jsonResponse);
-
-                    
+ 
                     string name = result.data.name;
                     string symbol = result.data.symbol;
                     int rank = result.data.rank;
@@ -66,8 +67,7 @@ namespace CryptoInfoViewer.Services
                     decimal? priceUsd = result.data.priceUsd != null ? (decimal?)result.data.priceUsd : null;
                     decimal? changePercent24Hr = result.data.changePercent24Hr != null ? (decimal?)result.data.changePercent24Hr : null;
                     decimal? vwap24Hr = result.data.vwap24Hr != null ? (decimal?)result.data.vwap24Hr : null;
-                    //string explorer = result.data.explorer;
-                    string? explorer = result.data.explorer != null ? $"<Hyperlink NavigateUri='{result.data.explorer}'>Explorer Link</Hyperlink>" : null;
+                    string? explorer = result.data.explorer;
 
 
                     CryptoCurrency currency = new CryptoCurrency
@@ -97,6 +97,7 @@ namespace CryptoInfoViewer.Services
 
             return null;
         }
+        //Метод пошуку криптовалюти за ім'ям або символом
         public async Task<List<CryptoCurrency>> SearchCurrencies(string searchTerm)
         {
             try
@@ -122,6 +123,7 @@ namespace CryptoInfoViewer.Services
             return null;
         }
 
+        //Отримання даних для побудови японської свічкової діаграми
         public async Task<List<CandleData>> GetDataFromApi(string exchange,string interval,string baseId,string quoteId)
         {
             using (HttpClient client = new HttpClient())
@@ -166,6 +168,8 @@ namespace CryptoInfoViewer.Services
                 }
             }
         }
+
+        //Отримання цін для обміну всі криптовалют
         public async Task<List<Rates>> GetRates()
         {
             try
@@ -187,10 +191,6 @@ namespace CryptoInfoViewer.Services
                         string currencySymbol = crypto.currencySymbol;
                         string type = crypto.type;
                         decimal rateUsd = crypto.rateUsd;
-
-
-
-
                         Rates rates = new Rates
                         {
                             id = id,
@@ -217,6 +217,7 @@ namespace CryptoInfoViewer.Services
             return null;
         }
 
+        // Отримання всіх криптовалют
         public async Task<List<CryptoCurrency>> GetCryptoCurrencies()
         {
             try

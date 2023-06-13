@@ -8,6 +8,7 @@ using System.Windows.Data;
 
 namespace CryptoInfoViewer.Services
 {
+    // Клас для захисту від null(якщо значення null то виводимо N/A)
     public class NullToNAConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)

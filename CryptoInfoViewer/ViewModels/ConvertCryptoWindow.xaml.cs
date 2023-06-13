@@ -28,6 +28,7 @@ namespace CryptoInfoViewer.Views
             InitializeComponent();
             LoadCurrencies();
         }
+        // Завантиаження  криптовалют для конвертування
         private async void LoadCurrencies()
         {
             List<Rates> rates = await cryptoService.GetRates();
@@ -35,7 +36,7 @@ namespace CryptoInfoViewer.Views
             TargetCurrencyComboBox.ItemsSource = rates;
         }
 
-
+        // Кнопка для конверутвання криптовалют
         private async void Convert_Click(object sender, RoutedEventArgs e)
         {
             string sourceCurrency = ((Rates)SourceCurrencyComboBox.SelectedItem)?.id;
@@ -58,6 +59,7 @@ namespace CryptoInfoViewer.Views
             ResultLabel.Content = $"{amount} {sourceCurrency} = {convertedAmount} {targetCurrency}";
         }
 
+        //Метод для конвертації криптовалют
         public async Task<decimal> ConvertCryptoCurrency(decimal amount, string sourceCurrency, string targetCurrency)
         {
             List<Rates> rates = await cryptoService.GetRates();
@@ -80,6 +82,15 @@ namespace CryptoInfoViewer.Views
             decimal amountInTargetCurrency = amountInUSD * targetRate.rateUsd;
 
             return amountInTargetCurrency;
+        }
+
+        // Забороняєм ввід не числових значень
+        private void AmountTextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            if (!char.IsDigit(e.Text, e.Text.Length - 1))
+            {
+                e.Handled = true;
+            }
         }
     }
 }

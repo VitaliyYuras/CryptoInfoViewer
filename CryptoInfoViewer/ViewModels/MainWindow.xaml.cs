@@ -36,6 +36,8 @@ namespace CryptoInfoViewer
             InitializeComponent();
             LoadData();
         }
+
+        // Завантаження топ 25 криптовалют
         public async void LoadData()
         {
             try
@@ -50,24 +52,27 @@ namespace CryptoInfoViewer
             }
         }
 
+        //Кнопка для вдкриття детальної інформації про криптовалюту
         private void Details_Click(object sender, RoutedEventArgs e)
         {
             Button button = (Button)sender;
             string id = button.CommandParameter.ToString();
 
-            // Створюємо нове вікно детальної інформації
             DetailsWindow detailWindow = new DetailsWindow(id);
 
-            // Відкриваємо нове вікно
+            
             detailWindow.Show();
         }
 
+
+        // Виклик методу пошуку криптовалюти
         private async void SearchBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             searchTerm = SearchBox.Text;
             await SearchCurrencies(searchTerm);
         }
 
+        // метод пошуку криптовалюти 
         private async Task SearchCurrencies(string searchTerm)
         {
             try
@@ -81,16 +86,16 @@ namespace CryptoInfoViewer
             }
         }
 
+        // Відкриття вікна для конвертування криптовалюти
         private void OpenConvert_Click(object sender, RoutedEventArgs e)
         {
-           
-
-            // Створюємо нове вікно детальної інформації
+          
             ConvertCryptoWindow detailWindow = new ConvertCryptoWindow();
 
-            // Відкриваємо нове вікно
             detailWindow.Show();
         }
+        
+        //Кнопка для виходу з програми
         private void Exit_Click(object sender, RoutedEventArgs e)
         {
             MessageBoxResult result = MessageBox.Show("Ви дійсно бажаєте вийти?", "Підтвердження виходу", MessageBoxButton.YesNo, MessageBoxImage.Question);
