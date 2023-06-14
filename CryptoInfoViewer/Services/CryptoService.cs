@@ -199,7 +199,6 @@ namespace CryptoInfoViewer.Services
                     {
                         CryptoCurrency currency = ParseCryptoCurrency(crypto);
                         cryptoCurrencies.Add(currency);
-                        cryptoCurrencies.Add(currency);
                     }
 
                     return cryptoCurrencies;
