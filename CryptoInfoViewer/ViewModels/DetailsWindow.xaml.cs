@@ -71,9 +71,9 @@ namespace CryptoInfoViewer.Views
 
             DrawCandleChart(candleData);
         }
+        // функція  малювання японської свічкової діаграми
         private void DrawCandleChart(List<CandleData> data)
         {
-            // Очистити попередню діаграму, якщо є
             canvas.Children.Clear();
 
             // Встановити розміри графіку
@@ -88,7 +88,72 @@ namespace CryptoInfoViewer.Views
             decimal minPrice = data.Min(c => c.low);
             decimal priceRange = maxPrice - minPrice;
 
-            // Проходження по кожному запису і побудова свічки
+            // Додати осі
+            Line xAxis = new Line
+            {
+                X1 = 0,
+                X2 = chartWidth,
+                Y1 = chartHeight,
+                Y2 = chartHeight,
+                Stroke = Brushes.Black,
+                StrokeThickness = 1
+            };
+
+            Line yAxis = new Line
+            {
+                X1 = 0,
+                X2 = 0,
+                Y1 = 0,
+                Y2 = chartHeight,
+                Stroke = Brushes.Black,
+                StrokeThickness = 1
+            };
+
+            canvas.Children.Add(xAxis);
+            canvas.Children.Add(yAxis);
+
+            // Додати мітки на осі X
+            for (int i = 0; i < data.Count; i++)
+            {
+                CandleData candle = data[i];
+                double labelX = i * candleWidth + candleWidth / 2;
+
+                TextBlock label = new TextBlock
+                {
+                    Text = i.ToString(),/*candle.time.ToString()*/ 
+                    FontSize = 10,
+                    Foreground = Brushes.Black,
+                    TextAlignment = TextAlignment.Center
+                };
+
+                Canvas.SetLeft(label, labelX);
+                Canvas.SetTop(label, chartHeight + 5);
+
+                canvas.Children.Add(label);
+            }
+
+            // Додати мітки на осі Y
+            int numLabels = 5;
+            double stepSize = (double)priceRange / numLabels;
+
+            for (int i = 0; i <= numLabels; i++)
+            {
+                decimal labelPrice = minPrice + (decimal)(stepSize * i);
+                double labelY = chartHeight * (1 - (double)(labelPrice - minPrice) / (double)priceRange);
+
+                TextBlock label = new TextBlock
+                {
+                    Text = labelPrice.ToString(),
+                    FontSize = 10,
+                    Foreground = Brushes.Black,
+                    TextAlignment = TextAlignment.Right
+                };
+
+                Canvas.SetLeft(label, -40);
+                Canvas.SetTop(label, labelY - 10);
+
+                canvas.Children.Add(label);
+            }
             for (int i = 0; i < data.Count; i++)
             {
                 CandleData candle = data[i];

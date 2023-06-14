@@ -125,48 +125,6 @@ namespace CryptoInfoViewer.Services
         }
 
         //Отримання даних для побудови японської свічкової діаграми
-        //public async Task<List<CandleData>> GetDataFromApi(string exchange,string interval,string baseId,string quoteId)
-        //{
-        //    using (HttpClient client = new HttpClient())
-        //    {
-        //        string apiUrl = "https://api.coingecko.com/api/v3/coins/bitcoin/ohlc?vs_currency=usd&days=7";
-        //        HttpResponseMessage response = await client.GetAsync(apiUrl);
-
-        //        if (response.IsSuccessStatusCode)
-        //        {
-        //            string jsonResponse = await response.Content.ReadAsStringAsync();
-        //            dynamic result = JsonConvert.DeserializeObject(jsonResponse);
-        //            List<CandleData> cryptoData = new List<CandleData> ();
-        //            foreach (var crypto in result)
-        //            {
-
-        //                decimal open= crypto.open;
-        //                decimal high = crypto.high;
-        //                decimal low = crypto.low;
-        //                decimal close = crypto.close;
-
-        //                CandleData currency = new CandleData
-        //                {
-        //                    open=open,
-        //                    high=high,
-        //                    low=low,
-        //                    close=close,
-
-
-        //                };
-
-        //                cryptoData.Add(currency);
-        //            }
-        //            return cryptoData;
-
-        //        }
-        //        else
-        //        {
-        //            MessageBox.Show("Failed to retrieve data from API");
-        //            return null;
-        //        }
-        //    }
-        //}
         public async Task<List<CandleData>> GetDataFromApi(string symbol, string days, string currency)
         {
             using (HttpClient client = new HttpClient())
@@ -182,7 +140,7 @@ namespace CryptoInfoViewer.Services
                     List<CandleData> cryptoData = new List<CandleData>();
                     foreach (JArray candle in result)
                     {
-                       
+                        decimal time = (decimal)candle[0];
                         decimal open = (decimal)candle[1];
                         decimal high = (decimal)candle[2];
                         decimal low = (decimal)candle[3];
@@ -190,7 +148,7 @@ namespace CryptoInfoViewer.Services
 
                         CandleData currencyData = new CandleData
                         {
-                            
+                            time=time,
                             open = open,
                             high = high,
                             low = low,

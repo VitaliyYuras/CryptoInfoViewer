@@ -59,10 +59,10 @@
             </Button>
 
         </StackPanel>
-        <Canvas  x:Name="canvas" Grid.Row="0" Grid.Column="1" Background="Gray" >
-            <Line X1="0" X2="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=Canvas}}" Y1="0" Y2="0" Stroke="Black" StrokeThickness="1" />
-            <Line X1="0" X2="0" Y1="0" Y2="{Binding ActualHeight, RelativeSource={RelativeSource AncestorType=Canvas}}" Stroke="Black" StrokeThickness="1" />
+        <Canvas  x:Name="canvas" Grid.Row="0" Grid.Column="1" Background="White" Margin="0,24,10,39" >
+            
         </Canvas>
+        
 
 
         <DataGrid Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" x:Name="ListMarkets" AutoGenerateColumns="False">

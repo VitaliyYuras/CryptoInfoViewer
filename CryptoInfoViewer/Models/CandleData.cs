@@ -8,7 +8,7 @@ namespace CryptoInfoViewer.Models
 {
     public class CandleData
     {
-        
+        public decimal time { get; set; }
         public decimal open { get; set; }
         public decimal high { get; set; }
         public decimal low { get; set; }
