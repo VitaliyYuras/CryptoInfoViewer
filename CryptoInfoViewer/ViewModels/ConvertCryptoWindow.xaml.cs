@@ -39,8 +39,8 @@ namespace CryptoInfoViewer.Views
         // Кнопка для конверутвання криптовалют
         private async void Convert_Click(object sender, RoutedEventArgs e)
         {
-            string sourceCurrency = ((Rates)SourceCurrencyComboBox.SelectedItem)?.id;
-            string targetCurrency = ((Rates)TargetCurrencyComboBox.SelectedItem)?.id; 
+            string? sourceCurrency = GetSelectedCurrencyId(SourceCurrencyComboBox);
+            string? targetCurrency = GetSelectedCurrencyId(TargetCurrencyComboBox);
 
             if (string.IsNullOrEmpty(sourceCurrency) || string.IsNullOrEmpty(targetCurrency))
             {
@@ -58,30 +58,36 @@ namespace CryptoInfoViewer.Views
 
             ResultLabel.Content = $"{amount} {sourceCurrency} = {convertedAmount} {targetCurrency}";
         }
+        private string? GetSelectedCurrencyId(ComboBox comboBox)
+        {
+            return (comboBox.SelectedItem as Rates)?.id;
+        }
 
         //Метод для конвертації криптовалют
         public async Task<decimal> ConvertCryptoCurrency(decimal amount, string sourceCurrency, string targetCurrency)
         {
             List<Rates> rates = await cryptoService.GetRates();
 
-            Rates sourceRate = rates.FirstOrDefault(r => r.id == sourceCurrency);
+            Rates? sourceRate = GetRateById(rates, sourceCurrency);
             if (sourceRate == null)
             {
-                MessageBox.Show("Exchange rate for the source currency not found.");
-                return 0m;
+                throw new Exception("Exchange rate for the source currency not found.");
             }
 
-            Rates targetRate = rates.FirstOrDefault(r => r.id == targetCurrency);
+            Rates? targetRate = GetRateById(rates, targetCurrency);
             if (targetRate == null)
             {
-                MessageBox.Show("Exchange rate for the target currency not found.");
-                return 0m;
+                throw new Exception("Exchange rate for the target currency not found.");
             }
 
             decimal amountInUSD = amount / sourceRate.rateUsd;
             decimal amountInTargetCurrency = amountInUSD * targetRate.rateUsd;
 
             return amountInTargetCurrency;
+        }
+        private Rates? GetRateById(List<Rates> rates, string currencyId)
+        {
+            return rates.FirstOrDefault(r => r.id == currencyId);
         }
 
         // Забороняєм ввід не числових значень

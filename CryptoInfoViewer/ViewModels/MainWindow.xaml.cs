@@ -42,9 +42,9 @@ namespace CryptoInfoViewer
         {
             try
             {
-                List<CryptoCurrency> top10CryptoCurrencies = await cryptoService.GetTop25CryptoCurrencies();
+                List<CryptoCurrency> top25CryptoCurrencies = await cryptoService.GetTop25CryptoCurrencies();
 
-                MyListBox.ItemsSource = top10CryptoCurrencies;
+                MyListBox.ItemsSource = top25CryptoCurrencies;
             }
             catch (Exception ex)
             {
@@ -56,11 +56,12 @@ namespace CryptoInfoViewer
         private void Details_Click(object sender, RoutedEventArgs e)
         {
             Button button = (Button)sender;
-            string id = button.CommandParameter.ToString();
-
+            string? id = button.CommandParameter.ToString();
+            OpenDetailsWindow(id);
+        }
+        private void OpenDetailsWindow(string id)
+        {
             DetailsWindow detailWindow = new DetailsWindow(id);
-
-            
             detailWindow.Show();
         }
 
@@ -77,7 +78,7 @@ namespace CryptoInfoViewer
         {
             try
             {
-                List<CryptoCurrency> searchResults = await cryptoService.SearchCurrencies(searchTerm);
+                List<CryptoCurrency>? searchResults = await cryptoService.SearchCurrencies(searchTerm);
                 MyListBox.ItemsSource = searchResults;
             }
             catch (Exception ex)
@@ -90,15 +91,15 @@ namespace CryptoInfoViewer
         private void OpenConvert_Click(object sender, RoutedEventArgs e)
         {
           
-            ConvertCryptoWindow detailWindow = new ConvertCryptoWindow();
+            ConvertCryptoWindow convertWindow = new ConvertCryptoWindow();
 
-            detailWindow.Show();
+            convertWindow.Show();
         }
         
         //Кнопка для виходу з програми
         private void Exit_Click(object sender, RoutedEventArgs e)
         {
-            MessageBoxResult result = MessageBox.Show("Ви дійсно бажаєте вийти?", "Підтвердження виходу", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            MessageBoxResult result = MessageBox.Show("Do you really want to log out?", "Logout confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question);
 
             if (result == MessageBoxResult.Yes)
             {
@@ -109,8 +110,7 @@ namespace CryptoInfoViewer
         private void About_Click(object sender, RoutedEventArgs e)
         {
              MessageBox.Show("A program that  display various information\r\nrelated to cryptocurrencies \r\nVitali Yuras");
-
-            
+    
         }
 
     }

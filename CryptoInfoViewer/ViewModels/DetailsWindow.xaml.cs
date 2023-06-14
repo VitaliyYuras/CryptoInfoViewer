@@ -12,7 +12,6 @@ using System.Windows.Media;
 using System.Windows.Shapes;
 using CryptoInfoViewer.Models;
 using CryptoInfoViewer.Services;
-
 using System.Diagnostics;
 
 
@@ -28,46 +27,41 @@ namespace CryptoInfoViewer.Views
 
         public DetailsWindow(string id)
         {
-            cryptoService = new CryptoService();
-            
+            cryptoService = new CryptoService();           
             InitializeComponent();
-            LoadMarkets(id);
-            LoadDetails(id);
-            LoadCandlestickData(id);
+            LoadData(id);
 
-
+        }
+        private async void LoadData(string id)
+        {
+            try
+            {
+                await LoadDetails(id);
+                await LoadMarkets(id);
+                await LoadCandlestickData(id);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error: {ex.Message}");
+            }
         }
         // Завантаження всіх даних про певну криптовалюту
-        public async void LoadDetails(string id)
+        public async Task LoadDetails(string id)
         {
-            try
-            {
-                CryptoCurrency сryptoCurrencies = await cryptoService.GetCryptoCurrencies(id);
-                DataContext = сryptoCurrencies;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Error: {ex.Message}");
-            }
+            CryptoCurrency? cryptoCurrency = await cryptoService.GetCryptoCurrencyById(id);
+            DataContext = cryptoCurrency;
         }
         // ЗАвантаження ринків де можна обміняти дану криптовалюту
-        public async void LoadMarkets(string id)
+        public async Task LoadMarkets(string id)
         {
-            try
-            {
-                List <CryptoMarkets> сryptoMarkets = await cryptoService.GetMarkets(id);
-                ListMarkets.ItemsSource = сryptoMarkets;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Error: {ex.Message}");
-            }
+            List<CryptoMarkets>? cryptoMarkets = await cryptoService.GetMarkets(id);
+            ListMarkets.ItemsSource = cryptoMarkets;
         }
 
         // завантаження діаграми криптовалюти
-        public async void LoadCandlestickData(string symbol)
+        public async Task LoadCandlestickData(string symbol)
         {
-            List<CandleData> candleData = await cryptoService.GetDataFromApi(symbol, "7", "usd");
+            List<CandleData>? candleData = await cryptoService.GetDataFromApi(symbol, "7", "usd");
 
             DrawCandleChart(candleData);
         }
@@ -192,16 +186,10 @@ namespace CryptoInfoViewer.Views
             Button button = (Button)sender;
             Hyperlink? hyperlink = button.Template.FindName("PART_Hyperlink", button) as Hyperlink;
 
-            if (hyperlink != null)
+            if (hyperlink != null && hyperlink.NavigateUri != null)
             {
-                Uri explorerUri = hyperlink.NavigateUri;
-
-                if (explorerUri != null)
-                {
-                    string url = explorerUri.AbsoluteUri;
-
-                    Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
-                }
+                string url = hyperlink.NavigateUri.AbsoluteUri;
+                Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
             }
 
 

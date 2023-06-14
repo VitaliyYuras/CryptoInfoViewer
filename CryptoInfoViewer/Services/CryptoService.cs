@@ -15,7 +15,7 @@ namespace CryptoInfoViewer.Services
 {
     public class CryptoService
     {
-        private HttpClient httpClient;
+        private readonly HttpClient httpClient;
 
         public CryptoService()
         {
@@ -46,7 +46,7 @@ namespace CryptoInfoViewer.Services
             return null;
         }
         //Отримання криптовалюти за id
-        public async Task<CryptoCurrency> GetCryptoCurrencies( string id)
+        public async Task<CryptoCurrency?> GetCryptoCurrencyById( string id)
         {
             try
             {
@@ -57,58 +57,30 @@ namespace CryptoInfoViewer.Services
                 {
                     string jsonResponse = await response.Content.ReadAsStringAsync();
                     dynamic result = JsonConvert.DeserializeObject(jsonResponse);
- 
-                    string name = result.data.name;
-                    string symbol = result.data.symbol;
-                    int rank = result.data.rank;
-                    decimal supply = result.data.supply;
-                    decimal? maxSupply = result.data.maxSupply != null ? (decimal?)result.data.maxSupply : null;
-                    decimal? marketCapUsd = result.data.marketCapUsd != null ? (decimal?)result.data.marketCapUsd : null;
-                    decimal? volumeUsd24Hr = result.data.volumeUsd24Hr != null ? (decimal?)result.data.volumeUsd24Hr : null;
-                    decimal? priceUsd = result.data.priceUsd != null ? (decimal?)result.data.priceUsd : null;
-                    decimal? changePercent24Hr = result.data.changePercent24Hr != null ? (decimal?)result.data.changePercent24Hr : null;
-                    decimal? vwap24Hr = result.data.vwap24Hr != null ? (decimal?)result.data.vwap24Hr : null;
-                    string? explorer = result.data.explorer;
 
-
-                    CryptoCurrency currency = new CryptoCurrency
-                    {
-                        id = id,
-                        name = name,
-                        symbol = symbol,
-                        rank = rank,
-                        supply = supply,
-                        maxSupply=maxSupply,
-                        marketCapUsd = marketCapUsd,
-                        volumeUsd24Hr=volumeUsd24Hr,
-                        priceUsd = priceUsd,
-                        changePercent24Hr=changePercent24Hr,
-                        vwap24Hr=vwap24Hr,
-                        explorer=explorer
-
-                    };
+                    CryptoCurrency currency = ParseCryptoCurrency(result.data);
 
                     return currency;
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error: {ex.Message}");
+                ShowErrorMessage(ex);
             }
 
             return null;
         }
         //Метод пошуку криптовалюти за ім'ям або символом
-        public async Task<List<CryptoCurrency>> SearchCurrencies(string searchTerm)
+        public async Task<List<CryptoCurrency>?> SearchCurrencies(string searchTerm)
         {
             try
             {
 
-                List<CryptoCurrency> top10CryptoCurrencies = await GetCryptoCurrencies();
+                List<CryptoCurrency> cryptoCurrencies = await GetCryptoCurrencies();
 
-                if (top10CryptoCurrencies != null)
+                if (cryptoCurrencies != null)
                 {
-                    List<CryptoCurrency> filteredCurrencies = top10CryptoCurrencies
+                    List<CryptoCurrency> filteredCurrencies =cryptoCurrencies
                         .Where(c => c.name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)
                                     || c.symbol.Contains(searchTerm, StringComparison.OrdinalIgnoreCase))
                         .ToList();
@@ -118,19 +90,19 @@ namespace CryptoInfoViewer.Services
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error: {ex.Message}");
+                ShowErrorMessage(ex);
             }
 
             return null;
         }
 
         //Отримання даних для побудови японської свічкової діаграми
-        public async Task<List<CandleData>> GetDataFromApi(string symbol, string days, string currency)
+        public async Task<List<CandleData>?> GetDataFromApi(string symbol, string days, string currency)
         {
-            using (HttpClient client = new HttpClient())
+            try
             {
                 string apiUrl = $"https://api.coingecko.com/api/v3/coins/{symbol}/ohlc?vs_currency={currency}&days={days}";
-                HttpResponseMessage response = await client.GetAsync(apiUrl);
+                HttpResponseMessage response = await httpClient.GetAsync(apiUrl);
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -148,7 +120,7 @@ namespace CryptoInfoViewer.Services
 
                         CandleData currencyData = new CandleData
                         {
-                            time=time,
+                            time = time,
                             open = open,
                             high = high,
                             low = low,
@@ -163,13 +135,19 @@ namespace CryptoInfoViewer.Services
                 else
                 {
                     MessageBox.Show("Failed to retrieve data from API");
-                    return null;
                 }
             }
+            catch (Exception ex)
+            {
+                ShowErrorMessage(ex);
+            }
+
+            return null;
+
         }
 
         //Отримання цін для обміну всі криптовалют
-        public async Task<List<Rates>> GetRates()
+        public async Task<List<Rates>?> GetRates()
         {
             try
             {
@@ -185,20 +163,7 @@ namespace CryptoInfoViewer.Services
 
                     foreach (var crypto in result.data)
                     {
-                        string id = crypto.id;
-                        string symbol = crypto.symbol;
-                        string currencySymbol = crypto.currencySymbol;
-                        string type = crypto.type;
-                        decimal rateUsd = crypto.rateUsd;
-                        Rates rates = new Rates
-                        {
-                            id = id,
-                            symbol = symbol,
-                            currencySymbol = currencySymbol,
-                            type = type,
-                            rateUsd = rateUsd
-
-                        };
+                        Rates rates = ParseRates(crypto);
 
                         ratesList.Add(rates);
                     }
@@ -209,15 +174,14 @@ namespace CryptoInfoViewer.Services
             }
             catch (Exception ex)
             {
-
-                MessageBox.Show($"Error: {ex.Message}");
+                ShowErrorMessage(ex);
             }
 
             return null;
         }
 
         // Отримання всіх криптовалют
-        public async Task<List<CryptoCurrency>> GetCryptoCurrencies()
+        public async Task<List<CryptoCurrency>?> GetCryptoCurrencies()
         {
             try
             {
@@ -233,26 +197,8 @@ namespace CryptoInfoViewer.Services
 
                     foreach (var crypto in result.data)
                     {
-                        string id = crypto.id;
-                        string name = crypto.name;
-                        string symbol = crypto.symbol;
-                        int rank = crypto.rank;
-                        decimal supply = crypto.supply;
-
-                        decimal priceUsd = crypto.priceUsd;
-
-
-                        CryptoCurrency currency = new CryptoCurrency
-                        {
-                            id = id,
-                            name = name,
-                            symbol = symbol,
-                            rank = rank,
-                            supply = supply,
-                            priceUsd = priceUsd
-
-                        };
-
+                        CryptoCurrency currency = ParseCryptoCurrency(crypto);
+                        cryptoCurrencies.Add(currency);
                         cryptoCurrencies.Add(currency);
                     }
 
@@ -262,7 +208,7 @@ namespace CryptoInfoViewer.Services
             catch (Exception ex)
             {
 
-                MessageBox.Show($"Error: {ex.Message}");
+                ShowErrorMessage(ex);
             }
 
             return null;
@@ -270,7 +216,7 @@ namespace CryptoInfoViewer.Services
 
         //Отримання ринків де можна купити дану криптовалюту
 
-        public async Task<List<CryptoMarkets>> GetMarkets(string id)
+        public async Task<List<CryptoMarkets>?> GetMarkets(string id)
         {
             try
             {
@@ -288,21 +234,8 @@ namespace CryptoInfoViewer.Services
 
                     foreach (var crypto in result.data)
                     {
-                        
-                        string exchangeId = crypto.exchangeId;
-                        string quoteSymbol = crypto.quoteSymbol;
-                        decimal priceUsd = crypto.priceUsd;
-
-
-                        CryptoMarkets currency = new CryptoMarkets
-                        {
-                            exchangeId = exchangeId,
-                            quoteSymbol=quoteSymbol,
-                            priceUsd = priceUsd
-
-                        };
-
-                        cryptoMarkets.Add(currency);
+                        CryptoMarkets markets = ParseCryptoMarkets(crypto);
+                        cryptoMarkets.Add(markets);
                     }
 
                     return cryptoMarkets;
@@ -311,10 +244,71 @@ namespace CryptoInfoViewer.Services
             catch (Exception ex)
             {
 
-                MessageBox.Show($"Error: {ex.Message}");
+                ShowErrorMessage(ex);
             }
 
             return null;
+        }
+        private CryptoCurrency ParseCryptoCurrency(dynamic data)
+        {
+            string id = data.id;
+            string name = data.name;
+            string symbol = data.symbol;
+            int rank = data.rank;
+            decimal supply = data.supply;
+            decimal priceUsd = data.priceUsd;
+
+            CryptoCurrency currency = new CryptoCurrency
+            {
+                id = id,
+                name = name,
+                symbol = symbol,
+                rank = rank,
+                supply = supply,
+                priceUsd = priceUsd
+            };
+
+            return currency;
+        }
+
+        private Rates ParseRates(dynamic data)
+        {
+            string id = data.id;
+            string symbol = data.symbol;
+            string currencySymbol = data.currencySymbol;
+            string type = data.type;
+            decimal rateUsd = data.rateUsd;
+
+            Rates rates = new Rates
+            {
+                id = id,
+                symbol = symbol,
+                currencySymbol = currencySymbol,
+                type = type,
+                rateUsd = rateUsd
+            };
+
+            return rates;
+        }
+
+        private CryptoMarkets ParseCryptoMarkets(dynamic data)
+        {
+            string exchangeId = data.exchangeId;
+            string quoteSymbol = data.quoteSymbol;
+            decimal priceUsd = data.priceUsd;
+
+            CryptoMarkets markets = new CryptoMarkets
+            {
+                exchangeId = exchangeId,
+                quoteSymbol = quoteSymbol,
+                priceUsd = priceUsd
+            };
+
+            return markets;
+        }
+        private void ShowErrorMessage(Exception ex)
+        {
+            MessageBox.Show($"Error: {ex.Message}");
         }
 
 
