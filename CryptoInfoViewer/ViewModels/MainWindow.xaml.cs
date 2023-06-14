@@ -30,10 +30,12 @@ namespace CryptoInfoViewer
     {
         private CryptoService cryptoService;
         private string searchTerm;
+        private bool isFirstSelection = true;
         public MainWindow()
         {
             cryptoService = new CryptoService();
             InitializeComponent();
+            LanguageComboBox.SelectionChanged += LanguageComboBox_SelectionChanged;
             LoadData();
         }
 
@@ -112,7 +114,24 @@ namespace CryptoInfoViewer
              MessageBox.Show("A program that  display various information\r\nrelated to cryptocurrencies \r\nVitali Yuras");
     
         }
-
+        private void LanguageComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (isFirstSelection)
+            {
+                isFirstSelection = false;
+                ComboBox comboBox = (ComboBox)sender;
+                ComboBoxItem selectedItem = (ComboBoxItem)comboBox.SelectedItem;
+                string selectedLanguage = (string)selectedItem.Tag;
+                System.Threading.Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo(selectedLanguage);
+                ReloadWindow();
+            }
+        }
+        private void ReloadWindow()
+        {
+            MainWindow newWindow = new MainWindow();
+            newWindow.Show();
+            Close();
+        }
     }
 }
 
