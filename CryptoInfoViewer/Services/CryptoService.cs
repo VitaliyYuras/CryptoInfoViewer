@@ -58,7 +58,7 @@ namespace CryptoInfoViewer.Services
                     string jsonResponse = await response.Content.ReadAsStringAsync();
                     dynamic result = JsonConvert.DeserializeObject(jsonResponse);
 
-                    CryptoCurrency currency = ParseCryptoCurrency(result.data);
+                    CryptoCurrency currency = ParseCryptoCurrencyAllInformation(result.data);
 
                     return currency;
                 }
@@ -266,6 +266,40 @@ namespace CryptoInfoViewer.Services
                 supply = supply,
                 priceUsd = priceUsd
             };
+
+            return currency;
+        }
+        private CryptoCurrency ParseCryptoCurrencyAllInformation(dynamic data)
+        {
+            string id = data.id;
+            string name = data.name;
+            string symbol = data.symbol;
+            int rank = data.rank;
+            decimal supply = data.supply;
+            decimal? maxSupply = data.maxSupply != null ? (decimal?)data.maxSupply : null;
+            decimal? marketCapUsd = data.marketCapUsd != null ? (decimal?)data.marketCapUsd : null;
+            decimal? volumeUsd24Hr = data.volumeUsd24Hr != null ? (decimal?)data.volumeUsd24Hr : null;
+            decimal? priceUsd = data.priceUsd != null ? (decimal?)data.priceUsd : null;
+            decimal? changePercent24Hr = data.changePercent24Hr != null ? (decimal?)data.changePercent24Hr : null;
+            decimal? vwap24Hr = data.vwap24Hr != null ? (decimal?)data.vwap24Hr : null;
+
+            string? explorer = data.explorer;
+
+            CryptoCurrency currency = new CryptoCurrency
+                    {
+                        id = id,
+                        name = name,
+                        symbol = symbol,
+                        rank = rank,
+                        supply = supply,
+                        maxSupply = maxSupply,
+                        marketCapUsd = marketCapUsd,
+                        volumeUsd24Hr = volumeUsd24Hr,
+                        priceUsd = priceUsd,
+                        changePercent24Hr = changePercent24Hr,
+                        vwap24Hr = vwap24Hr,
+                        explorer = explorer
+                     };
 
             return currency;
         }
