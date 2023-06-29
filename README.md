@@ -10,7 +10,7 @@ This application is implemented using C# language and .NET platform with the hel
 - Detailed information about a cryptocurrency is displayed in a separate window. It includes a Japanese candlestick chart and a list of markets where the cryptocurrency can be purchased.
 - The "Cryptocurrency Conversion" window allows users to convert one cryptocurrency to another.
 - The application supports two languages: English and Ukrainian.
-- MVVM design pattern is utilized.
+
   
 ## Usage
 
